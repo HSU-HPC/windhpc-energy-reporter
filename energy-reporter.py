@@ -76,6 +76,8 @@ def main():
     if args.nodefile :
         for line in args.nodefile:
             nodes.append(line.strip())
+    # remove duplicates node names
+    nodes = list(set(nodes))
     logging.debug(f"Nodes: {nodes}")
 
     # loop over nodes
