@@ -54,6 +54,10 @@ At the WindHPC HLRS system, the following nodes are currently available:
 #!/bin/bash
 #PBS -l ...
 
+# set up environment variables for access to the InfluxDB
+export INFLUX_URL="<URL>"
+export INFLUX_TOKEN="<TOKEN>"
+
 t_start=$(date +%s)
 
 # run your code/application here
