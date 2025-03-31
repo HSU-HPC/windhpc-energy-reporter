@@ -50,8 +50,19 @@ def main():
     from influxdb_client import InfluxDBClient, Point
     from influxdb_client.client.write_api import SYNCHRONOUS
 
+    try:
+        from dotenv import load_dotenv
+        if not load_dotenv():
+            logging.warning("Warning: .env file not found. Falling back to environment variables.")
+        else:
+            logging.info("Read .env")
+    except ImportError:
+        logging.warning("Warning: python-dotenv is not installed. Falling back to environment variables.")
+
     influx_url = os.getenv('INFLUX_URL')
     influx_token = os.getenv('INFLUX_TOKEN')
+    #logging.debug(f"INFLUX_URL: {influx_url}")
+    #logging.debug(f"INFLUX_TOKEN: {influx_token}")
     client = InfluxDBClient(url=influx_url, token=influx_token, org="HLRS")
 
     query_api = client.query_api()
