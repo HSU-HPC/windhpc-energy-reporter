@@ -18,12 +18,15 @@ python3 -m pip install -r requirements.txt
 ```
 
 ## Environment setup
-To work the URL and token for the InfluxDB has to be provided. This can be done via an `.env` file
+To work the URL and token for the InfluxDB as has to be provided. Additionally, the cluster has to be selected due to small differences in the setup. Valid values for `WINDHPC_SYSTEM` are: *TrainingHLRS* and *Windpark*
+
+This can be done via an `.env` file
 or as environment variables before running the energy-reporter:
 ```
 # .env file content:
 INFLUX_URL=<URL>
 INFLUX_TOKEN=<TOKEN>
+WINDHPC_SYSTEM=<SYSTEM>
 ```
 
 ## Basic usage

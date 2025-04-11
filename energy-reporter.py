@@ -61,20 +61,41 @@ def main():
 
     influx_url = os.getenv('INFLUX_URL')
     influx_token = os.getenv('INFLUX_TOKEN')
+    windhpc_system = os.getenv('WINDHPC_SYSTEM')
     #logging.debug(f"INFLUX_URL: {influx_url}")
     #logging.debug(f"INFLUX_TOKEN: {influx_token}")
-    client = InfluxDBClient(url=influx_url, token=influx_token, org="HLRS")
+    #logging.debug(f"WINDHPC_SYSTEM: {windhpc_system}")
+    client = InfluxDBClient(url=influx_url, token=influx_token, org="WindHPC")
 
     query_api = client.query_api()
 
 
     t_start = int(parse_time_str(args.start).timestamp())
     t_end = int(parse_time_str(args.end).timestamp())
-    query=f"""from(bucket:"training")
-            |> range(start: {t_start} ,stop: {t_end})
-            |> filter(fn: (r) => r["_measurement"] == "ipmi_sensor")
-            |> filter(fn: (r) => r["name"] == "ps2_input_power")
-            |> map(fn: (r) => ({{ r with _time: int(v: r._time)}}))"""
+
+# Trainingscluster HLRS
+    if windhpc_system == "TrainingHLRS" :
+        query=f"""from(bucket:"training")
+                |> range(start: {t_start} ,stop: {t_end})
+                |> filter(fn: (r) => r["_measurement"] == "ipmi_sensor")
+                |> filter(fn: (r) => r["name"] == "ps2_input_power")
+                |> map(fn: (r) => ({{ r with _time: int(v: r._time)}}))"""
+
+        host_name_key="host"
+
+# Windpark
+    if windhpc_system == "Windpark" :
+        query=f"""from(bucket: "windpark")
+        |> range(start: {t_start}, stop: {t_end})
+        |> filter(fn: (r) => r["_measurement"] == "ipmi_sensor")
+        |> filter(fn: (r) => r["server"] == "n000401" or r["server"] == "n000301" or r["server"] == "n000201" or r["server"] == "n000101" or r["server"] == "n000001" or r["server"] == "wp-fs")
+        |> filter(fn: (r) => r["name"] == "ps1_input_power" or r["name"] == "ps2_input_power")
+        |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)
+        |> map(fn: (r) => ({{ r with _time: int(v: r._time)}}))"""
+
+        host_name_key="server"
+
+    logging.debug(f"host_name_key: {host_name_key}")
 
     logging.debug(f"Query: {query}")
 
@@ -103,11 +124,12 @@ def main():
         # loop over tables
         for table in tables:
             for row in table.records:
-                if row["host"] == host_name:
-                    # print (row.values)
+                # print (row.values)
+                # print (row[host_name_key])
+                if row[host_name_key] == host_name:
                     t=int(row["_time"]/1000000000)
                     p=int(row["_value"])
-                    print(t,p,row["host"])
+                    print(t,p,row[host_name_key])
 
                     if t_first_b==-2:
                         t_first_b=t
