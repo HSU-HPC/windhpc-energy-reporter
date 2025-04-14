@@ -53,6 +53,12 @@ At the WindHPC HLRS system, the following nodes are currently available:
 - n012601
 - n012801
 
+In the windpark, the following nodes are available:
+- n000001
+- n000101
+- n000201
+- n000301
+- n000401
 
 ## Usage in a PBS job script
 ```sh
