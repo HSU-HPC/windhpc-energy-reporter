@@ -22,6 +22,7 @@ fi
 if [ -f "$VENV_DIR/bin/activate" ]; then
     echo "Activating virtual environment..."
     export VIRTUAL_ENV_DISABLE_PROMPT=1
+    # shellcheck disable=SC1091
     source "$VENV_DIR/bin/activate"
     export PS1="(.venv) \w \$ "
 else
@@ -40,6 +41,10 @@ fi
 
 echo "Creating $ENV_FILE"
 TUTORIAL=$(tutorial --paged)
+# shellcheck disable=SC2181
+if [ $? != 0 ]; then
+    >&2 echo '(Values of "INFLUX_URL" and "INFLUX_TOKEN" will be left blank.)'
+fi
 {
     echo "WINDHPC_SYSTEM=HSU"
     # Parse InfluxDB values from `tutorial` and write to .env

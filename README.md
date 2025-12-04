@@ -8,10 +8,10 @@ The script **energy-reporter.py** reads recorded power data from an InfluxDB, in
 
 The energy-reporter requires
 
-* python 3.6 or newer
-* the influxdb-client python library version 1.31 or newer
+* Python 3.6 or newer
+* the influxdb-client Python library version 1.31 or newer
 
-#### Installing dependencies and usage with a python virtual environment (venv)
+#### Installing dependencies and usage with a Python virtual environment (venv)
 
 ```sh
 python3 -m venv --system-site-packages ~/venvs/WindHPC-energy-reporter
