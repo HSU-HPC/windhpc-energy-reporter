@@ -23,7 +23,7 @@ def parse_time_str(time_str):
         return datetime.fromtimestamp(int(time_str))
     # parse ISO 8601 (YYYY-MM-DDThh:mm:ss) or fail
     try:
-        return datetime.fromisoformat(time_str)
+        return datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S")
     except ValueError:
         raise ValueError(f"Invalid time format: {time_str}")
 
@@ -86,7 +86,7 @@ def main():
 
     influx_url = os.getenv("INFLUX_URL")
     influx_token = os.getenv("INFLUX_TOKEN")
-    influx_org = os.getenv("INFLUX_ORG")
+    influx_org = os.getenv("INFLUX_ORG", "WindHPC")
     windhpc_system = os.getenv("WINDHPC_SYSTEM")
     client = InfluxDBClient(url=influx_url, token=influx_token, org=influx_org)
 
@@ -100,7 +100,7 @@ def main():
 
     # Trainingscluster HLRS
     if windhpc_system == "TrainingHLRS":
-        query = f"""from(bucket:"training")
+        query=f"""from(bucket:"training")
                 |> range(start: {t_start} ,stop: {t_end})
                 |> filter(fn: (r) => r["_measurement"] == "ipmi_sensor")
                 |> filter(fn: (r) => r["name"] == "ps2_input_power")
@@ -108,10 +108,22 @@ def main():
 
         host_name_key = "host"
 
+    # Windpark
+    elif windhpc_system == "Windpark" :
+        query=f"""from(bucket: "windpark")
+        |> range(start: {t_start}, stop: {t_end})
+        |> filter(fn: (r) => r["_measurement"] == "ipmi_sensor")
+        |> filter(fn: (r) => r["server"] == "n000401" or r["server"] == "n000301" or r["server"] == "n000201" or r["server"] == "n000101" or r["server"] == "n000001" or r["server"] == "wp-fs")
+        |> filter(fn: (r) => r["name"] == "ps1_input_power" or r["name"] == "ps2_input_power")
+        |> aggregateWindow(every: 2s, fn: sum, createEmpty: false)
+        |> map(fn: (r) => ({{ r with _time: int(v: r._time)}}))"""
+
+        host_name_key="server"
+
     # HSU
     # Run "tutorial" to find InfluxDB token under:
     # UTILITIES (last section) > 5. energy-reporter(-PDUck)
-    if windhpc_system == "HSU":
+    elif windhpc_system == "HSU":
         query = f"""from(bucket: "hsu")
         |> range(start: {t_start}, stop: {t_end})
         |> filter(fn: (r) => r["_measurement"] == "ipmi_sensor")
@@ -120,6 +132,10 @@ def main():
         |> map(fn: (r) => ({{ r with _time: int(v: r._time)}}))"""
 
         host_name_key = "host"
+        host_name_key="host"
+
+    else:
+        raise ValueError(f"Unknown WindHPC system: {windhpc_system}")
 
     logging.debug(f"host_name_key: {host_name_key}")
 

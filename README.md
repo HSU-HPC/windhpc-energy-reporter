@@ -19,14 +19,14 @@ source ~/venvs/WindHPC-energy-reporter/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 
-### Environment setup
+## Environment setup
 
-The URL and token for the InfluxDB must be provided as environment variables. Additionally, the cluster must be selected due to small differences in the setup. Valid options for `WINDHPC_SYSTEM` are: *TrainingHLRS* and *HSU*
+To work the URL and token for the InfluxDB as has to be provided. Additionally, the cluster has to be selected due to small differences in the setup. Valid values for `WINDHPC_SYSTEM` are: *TrainingHLRS*, *Windpark* and HSU.
 
 These values can be provided via an `.env` file (preferred)
 or as environment variables before running the energy-reporter:
 
-```sh
+```plain
 # .env file content:
 INFLUX_URL=<URL>
 INFLUX_TOKEN=<TOKEN>
@@ -59,6 +59,13 @@ At the WindHPC HLRS system, the following nodes are currently available:
 * n012601
 * n012801
 
+In the windpark, the following nodes are available:
+
+* n000001
+* n000101
+* n000201
+* n000301
+* n000401
 
 At HSU, the following nodes are available:
 
