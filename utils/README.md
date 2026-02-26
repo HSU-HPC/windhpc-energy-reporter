@@ -5,7 +5,8 @@ Some additional utilities to be used with the WindHPC-energy-reporter.
 ## install-report-job-energy.sh
 
 This script installs the `report-job-energy` command.  
-Add this to the end of your job script to automatically call `energy-reporter.py` with the correct arguments.
+Add this to the end of your job script to automatically call `energy-reporter.py` with the correct arguments.  
+If internet access is restricted use `report-job-energy --download-dependencies` to download the dependencies before copying the files to the cluster.
 
 ## telegraf-power-execd.py
 

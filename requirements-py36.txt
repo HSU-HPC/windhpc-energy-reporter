@@ -1,0 +1,9 @@
+# Fixed versions for Python 3.6.0 compatability
+certifi==2025.4.26
+dotenv==0.9.9
+influxdb-client==1.31.0
+python-dateutil==2.9.0.post0
+python-dotenv==0.20.0
+Rx==3.2.0
+six==1.17.0
+urllib3==1.26.20
